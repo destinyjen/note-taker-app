@@ -4,6 +4,8 @@ const fs = require ("fs");
 
 const path = require ("path");
 
+const { v4: uuidv4 } = require('uuid');
+
 const PORT = process.env.PORT || 3001;
 
 const app = express();
@@ -29,8 +31,24 @@ app.post('/api/notes', (req, res) => {
         const notes = JSON.parse(data)
         console.log(notes)
         console.log(req.body)
+
+        const newNote = {
+          id:uuidv4(),
+          ...req.body
+        }
+        console.log(newNote)
+
+        notes.push(
+          newNote
+        )
+        console.log(notes)
+        fs.writeFile("./db/db.json", JSON.stringify(notes),(err) => {
+          if (err) throw err;
+          res.json(notes)  
+        })
     })
 })
+
 
 
 app.get('/', (req, res) =>
